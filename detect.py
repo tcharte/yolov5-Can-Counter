@@ -64,7 +64,7 @@ def detect(save_img=False):
     t0 = time.time()
 
     total_cans = 0
-    n_frame_avg = 3 # Number of frames being averaged. This should be equal to number of regions per frame
+    n_frame_avg = 7 # Number of frames being averaged. This should be equal to number of regions per frame
     detection_q = queue.Queue(maxsize=n_frame_avg) # Initialize frame queue (FIFO) with max size of n_frame_avg
     for path, img, im0s, vid_cap in dataset:
         img = torch.from_numpy(img).to(device)
@@ -97,6 +97,8 @@ def detect(save_img=False):
             txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+
+            detections = []
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
@@ -107,7 +109,6 @@ def detect(save_img=False):
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
-                detections = []
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
@@ -172,16 +173,19 @@ def detect(save_img=False):
 
 def counter(q):
     # Region parameters (replace with experimanted values)
-    splits = [0.0, 0.2, 0.5, 1.0]
-    # r_bottom, r_top = 0.0, 0.2
-    # b_bottom, b_top = 0.2, 0.5
-    # g_bottom, g_top = 0.5, 1.0
+    splits = [0.11666666716337204, 0.16770833730697632, 0.27291667461395264, 0.390625, 0.5104166865348816, 
+                0.6343749761581421, 0.7552083134651184, 0.871874988079071]
+    splits = [split_ + 0.01 for split_ in splits]
+
     n_detections = []
     print()
     for i, detection in enumerate(list(q.queue)):
-        total_n_cans_in_frame_i = detection.shape[0]
-        # Number of detections that are in certain region
-        n_detections_region_i = torch.sum(np.logical_and(splits[i] < detection[:, 1], detection[:, 1] < splits[i+1])) 
+        # If no detections in current frame, set n_detections_region_i to 0
+        if detection.shape[0] == 0:
+            n_detections_region_i = 0
+        else:     
+            n_detections_region_i = torch.sum(np.logical_and(splits[i] < detection[:, 1], 
+                                                detection[:, 1] < splits[i+1])) 
         n_detections.append(n_detections_region_i)
         # For debugging
         print(f"n_detections_region_{i}: {n_detections_region_i}")
@@ -227,5 +231,9 @@ if __name__ == '__main__':
 
 # Run docker container: 
 # sudo docker run --ipc=host -v path/to/yolov5-Can-Counter:/usr/src/app  --gpus all -it ultralytics/yolov5:latest
+
 # Run can counting program: 
 # python detect.py --weights ptah/to/weight --source path/to/video --save-txt
+
+# Run NVIDIA GPU monitor:
+# watch -n0.2 nvidia-smi

@@ -391,6 +391,12 @@ def train(hyp, opt, device, tb_writer=None, wandb=None):
 
                 # Save last, best and delete
                 torch.save(ckpt, last)
+                
+                if opt.save_ckpt and epoch%10 == 0:
+                    checkpoint_name = 'checkpoint_' + str(epoch) + '.pt'
+                    checkpoint_dir = wdir / checkpoint_name
+                    torch.save(ckpt, checkpoint_dir)
+
                 if best_fitness == fi:
                     torch.save(ckpt, best)
                 del ckpt
@@ -452,6 +458,7 @@ if __name__ == '__main__':
     parser.add_argument('--img-size', nargs='+', type=int, default=[640, 640], help='[train, test] image sizes')
     parser.add_argument('--rect', action='store_true', help='rectangular training')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
+    parser.add_argument('--save-ckpt', action='store_true', help='save resumeable checkpoints every 10 epoches.')
     parser.add_argument('--nosave', action='store_true', help='only save final checkpoint')
     parser.add_argument('--notest', action='store_true', help='only test final epoch')
     parser.add_argument('--noautoanchor', action='store_true', help='disable autoanchor check')
