@@ -1,6 +1,7 @@
 import queue
 import time
-
+from multiprocessing import Pool, Process, Queue
+from concurrent.futures import ProcessPoolExecutor
 
 import torch
 import cv2
@@ -19,8 +20,10 @@ if __name__ == '__main__':
     iou_thresh = 0.45
     # splits = [0.0, 0.2, 0.5, 1.0]
     fps = 20
-    min_splits = 4
+    min_splits = 3
+    processes = 10
 
+    network_params = (weights, img_size, conf_thresh, iou_thresh)
     print('Initializing trained network...')
     frame_processor = TrainedModelFrameProcessor(weights, img_size, conf_thresh, iou_thresh)
 
@@ -37,7 +40,7 @@ if __name__ == '__main__':
             if fps == 60:
                 cal_frames.append(img)
             if fps == 20:
-                if (count % 3) == 0:
+                if (count % 20) == 0:
                     cal_frames.append(img)
         count += 1
 
@@ -54,7 +57,7 @@ if __name__ == '__main__':
             if fps == 60:
                 test_frames.append(img)
             if fps == 20:
-                if (count % 3) == 0:
+                if (count % 20) == 0:
                     test_frames.append(img)
         count += 1
 
@@ -106,20 +109,25 @@ def multi_can_calibrate_frame_splits():
     Similar to single_can_calibrate_frame_splits() but looks for a gap in the stream of cans and then tracks the leading
     can.
     """
-    lower_bound = 0.1
-    upper_trigger = 0.7
-    upper_bound = 0.9
+    lower_bound = 0.3
+    upper_trigger = 0.65
+    upper_bound = 0.75
     frame_count = 0
+    cap = cv2.VideoCapture(calibration_source)
+    success = True
 
     y_axis = []
     y_plot = []
     times = []
-
+    y_previous = 0
+    y_current = 0
     start_searching = False
     tracking = False
-    y_previous = 0
-    for img0 in cal_frames:
-        y_current = 0
+    while success:
+        success, img0 = cap.read()
+        if not success:
+            break
+
         detections = frame_processor.detect_cans(img0)
         if not start_searching:
             for detection in detections:  # This loop is trying to find a frame where no cans are in the ROI
@@ -155,21 +163,13 @@ def multi_can_calibrate_frame_splits():
                     y_plot.append(-y_current)
                     times.append(frame_count * 1 / fps)
                     if y_current > upper_trigger:
-                        print('Can successfully tracked to frame ', frame_count)
-                        if len(y_axis) < min_splits:
-                            print('not enough splits were tracked. Continuing search')
-                            y_axis = []
-                            times = []
-                            y_previous = 0
-                            start_searching = False
-                            tracking = False
-                            frame_count += 1
-                            continue
-                        else:
-                            return y_axis
-        y_previous = y_current
+                        print('Calibration complete. Can successfully tracked to frame ', frame_count)
+                        break
         frame_count += 1
 
+    if len(y_axis) < min_splits:
+        print('not enough splits were tracked. Either decrease the minimum number of splits, increase the frame rate, or try another calibration source.')
+        return []
     plt.ylim([-1, 0])
     plt.scatter(times, y_plot)
     plt.savefig("tracked_from_falling_cans.png")
@@ -187,8 +187,6 @@ def count_cans(splits):
         count = 0
         t1 = time.time_ns()
         for img0 in test_frames:
-            # cv2.imshow('img0', img0)
-            # cv2.waitKey(0)
             count += 1
             detections = frame_processor.detect_cans(img0)
             # detections = [(1, 1, 1, 1), (1, 1, 1, 1)]
@@ -340,13 +338,62 @@ def count_cans_multi_preloaded(splits):
     return total_cans
 
 
+def simple_detect(images, ids, params):
+    sub_frame_processor = TrainedModelFrameProcessor(*params)
+    detections_list = []
+    ret_val = None
+    t1 = time.time_ns()
+    for image in images:
+        detections = sub_frame_processor.detect_cans(image)
+        detections_list.append(detections)
+        ret_val = (detections_list, ids)
+    t2 = time.time_ns()
+    print('Time:', (t2 - t1) / 1e9)
+    return ret_val
+
+
+def multi_test_detect():
+    multi = True
+    if multi:
+        test__frame_ids = list(range(len(test_frames)))
+        split_test_frames = np.array_split(test_frames, processes)
+        split_frame_ids = np.array_split(test__frame_ids, processes)
+        t1 = time.time_ns()
+        results = []
+        with ProcessPoolExecutor() as executor:
+
+            process_list = []
+            for i in range(processes):
+                f = executor.submit(simple_detect, split_test_frames[i], split_frame_ids[i], network_params)
+                process_list.append(f)
+                print('Submitted process', i+1)
+
+            for process in process_list:
+                results.append(process.result())
+
+        t2 = time.time_ns()
+        print('Total time:', (t2 - t1) / 1e9)
+    else:
+        t1 = time.time_ns()
+        detections_list = []
+        for img0 in test_frames:
+            detections = frame_processor.detect_cans(img0)
+            detections_list += detections
+        print('Detections:', detections_list)
+        t2 = time.time_ns()
+        print('Time:', (t2 - t1) / 1e9)
+
+
 def main():
     print('Starting Calibration...')
     splits = multi_can_calibrate_frame_splits()
     print('splits:', splits)
+    if len(splits) < min_splits:
+        return
     print('Counting cans...')
-    total_cans = count_cans(splits)
-    print('total cans', total_cans)
+    multi_test_detect()
+    # total_cans = count_cans(splits)
+    # print('total cans', total_cans)
 
 
 if __name__ == '__main__':
