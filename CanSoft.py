@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-from frame_processor import TrainedModelFrameProcessor
+from frame_processor import YoloV5sTrainedModelFrameProcessor
 
 
 if __name__ == '__main__':
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     min_splits = 4
 
     print('Initializing trained network...')
-    frame_processor = TrainedModelFrameProcessor(weights, img_size, conf_thresh, iou_thresh)
+    frame_processor = YoloV5sTrainedModelFrameProcessor(weights, img_size, conf_thresh, iou_thresh)
 
     print('Preloading calibration video into memory to simulate live-streaming.')
     cap = cv2.VideoCapture(calibration_source)

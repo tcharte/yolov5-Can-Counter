@@ -1,8 +1,9 @@
-import os
-import time
+import multiprocessing
+import queue
 
 
-print('yeet wait 3')
-time.sleep(3)
-os.system('cls')
-print('boom gone!')
+quwu = multiprocessing.Queue(maxsize=100000)
+try:
+    yeet = quwu.get(block=False)
+except queue.Empty:
+    print('uh oh empty')
