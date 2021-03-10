@@ -36,6 +36,7 @@ if __name__ == '__main__':
 def main():
     frame_processor = YoloV5sTrainedModelFrameProcessor(*network_params)
     video = video_preloader(calibration_source, fps)
+    complete_loop = len(video)*fps/60
     splits = multi_can_calibrate_frame_splits(frame_processor, video, lower_bound, upper_trigger, upper_bound, min_splits)
     print('Splits:', splits)
     if len(splits) < min_splits:
@@ -65,8 +66,6 @@ def main():
 
     print('Ready to total up the counted cans...')
     refresh_time = 1
-    actual_can_count = 'N/A'
-    error = 'N/A'
     start = time.time_ns()/1e9
     t1 = time.time_ns()/1e9
     start_id = 0
@@ -86,9 +85,12 @@ def main():
                     actual = loop_camera.get_count()
                     error = (total_cans - actual) / actual * 100
                     actual_can_count = actual
+                else:
+                    actual_can_count = round((current_frame_id / complete_loop) * 880)
+                    error = (total_cans - actual_can_count) / actual_can_count * 100
                 print('Actual can count:', actual_can_count)
-                print('Error (%):', error)
-                print('Measured FPS:', (current_frame_id - start_id) / elapsed_time)
+                print('Error (%):', round(error, 2))
+                print('Measured FPS:', round((current_frame_id - start_id) / elapsed_time))
                 print('Camera FPS:', fps)
                 print('Parallel detection processes:', num_models)
                 print('Backed-up frames:', frame_queue.qsize())

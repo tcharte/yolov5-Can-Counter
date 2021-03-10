@@ -17,7 +17,6 @@ def frame_generator(video, frame_queue, count_queue, fps):
                 time.sleep(1/fps)
 
         total_count += 880
-        print('Frame queue size:', frame_queue.qsize())
 
         if count_queue.full():
             print('Count queue is full! Consumers are too slow. The actual can count is no longer accurate...')
