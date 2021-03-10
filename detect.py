@@ -173,3 +173,5 @@ if __name__ == '__main__':
                 strip_optimizer(opt.weights)
         else:
             detect()
+
+# detect.py --weights weights/best_600_epoch_new_dataset.pt --source data/mp4s/roughly_880_cans.mp4

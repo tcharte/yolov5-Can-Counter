@@ -42,7 +42,7 @@ def main():
     if len(splits) < min_splits:
         return
 
-    frame_queue = multiprocessing.Queue(maxsize=1000)  # Queue for the instances to get frames from the class. Max ~800MB
+    frame_queue = multiprocessing.Queue(maxsize=100000)  # Queue for the instances to get frames from the class. Max ~800MB
     raw_detections_queue = multiprocessing.Queue(maxsize=100000)
     sorted_detections_queue = multiprocessing.Queue(maxsize=100000)
     count_queue = multiprocessing.Queue(maxsize=1)
