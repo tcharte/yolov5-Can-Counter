@@ -1,6 +1,8 @@
+import os
 import time
 
-t1 = time.time_ns()
-time.sleep(15)
-t2 = time.time_ns()
-print(t2, t1, (t2-t1)/1e9)
+
+print('yeet wait 3')
+time.sleep(3)
+os.system('cls')
+print('boom gone!')

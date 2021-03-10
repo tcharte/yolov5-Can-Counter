@@ -18,7 +18,7 @@ if __name__ == '__main__':
     conf_thresh = 0.25
     iou_thresh = 0.45
     # splits = [0.0, 0.2, 0.5, 1.0]
-    fps = 20
+    fps = 60
     min_splits = 4
 
     print('Initializing trained network...')
