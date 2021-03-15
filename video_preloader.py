@@ -1,4 +1,5 @@
 import cv2
+import sys
 
 
 def video_preloader(source, fps):
@@ -9,6 +10,7 @@ def video_preloader(source, fps):
     count = 0
     while success:
         success, img = cap.read()
+        y = sys.getsizeof(img)
         if not success:
             break
         else:

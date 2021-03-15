@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-from frame_processor import YoloV5sTrainedModelFrameProcessor
+from frame_processor import YoloTrainedModelFrameProcessor
 
 
 if __name__ == '__main__':
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     network_params = (weights, img_size, conf_thresh, iou_thresh)
     print('Initializing trained network...')
-    frame_processor = YoloV5sTrainedModelFrameProcessor(weights, img_size, conf_thresh, iou_thresh)
+    frame_processor = YoloTrainedModelFrameProcessor(weights, img_size, conf_thresh, iou_thresh)
 
     print('Preloading calibration video into memory to simulate live-streaming.')
     cap = cv2.VideoCapture(calibration_source)
@@ -339,7 +339,7 @@ def count_cans_multi_preloaded(splits):
 
 
 def simple_detect(images, ids, params):
-    sub_frame_processor = YoloV5sTrainedModelFrameProcessor(*params)
+    sub_frame_processor = YoloTrainedModelFrameProcessor(*params)
     detections_list = []
     ret_val = None
     t1 = time.time_ns()

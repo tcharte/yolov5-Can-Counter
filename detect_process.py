@@ -1,13 +1,27 @@
-def detect_cans(frame_queue, detections_queue, params):
-    from frame_processor import YoloV5sTrainedModelFrameProcessor
+def detect_cans(frame_processor, frame_queue, detections_queue, params):
     from queue import Empty
-    frame_processor = YoloV5sTrainedModelFrameProcessor(*params)
-    print('Detection process initialized!')
-    while True:
-        try:
-            frame, frame_id = frame_queue.get(block=False)
-            detections = frame_processor.detect_cans(frame)
-            detections_queue.put((detections, frame_id))
-        except Empty:
-            continue
+    import platform
+    if platform.system() == 'Linux':
+        print('Detection process initialized!')
+        while True:
+            try:
+                frame, frame_id = frame_queue.get(block=False)
+                detections = frame_processor.detect_cans(frame)
+                detections_queue.put((detections, frame_id))
+            except Empty:
+                continue
+
+    elif platform.system() == 'Windows':
+        from frame_processor import YoloTrainedModelFrameProcessor
+        frame_processor = YoloTrainedModelFrameProcessor(*params)
+        print('Detection process initialized!')
+        while True:
+            try:
+                frame, frame_id = frame_queue.get(block=False)
+                detections = frame_processor.detect_cans(frame)
+                detections_queue.put((detections, frame_id))
+            except Empty:
+                continue
+
+
 

@@ -15,7 +15,7 @@ to the detect_cans method which returns a list of 4-tuples containing the detect
 """
 
 
-class YoloV5sTrainedModelFrameProcessor:
+class YoloTrainedModelFrameProcessor:
     def __init__(self, weights, img_size, conf_thresh, iou_thresh):
         self.weights = weights
         self.img_size = img_size
