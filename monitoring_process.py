@@ -1,4 +1,4 @@
-def monitor_performance(loop_camera, count_queue, frame_queue, raw_detections_queue, sorted_detections_queue, fps, complete_loop):
+def monitor_performance(loop_camera, count_queue, frame_queue, sorted_detections_queue, fps, complete_loop):
     import time
     import os
     import platform
