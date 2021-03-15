@@ -4,6 +4,8 @@ def frame_generator(video, frame_queue, count_queue, fps):
     Target function for running the camera acquisition as a process. This makes more sense as the dedicated process for
     the camera ensures it is not slowed down by the rest of the program
     """
+    print('Pausing camera so all processes have time to start')
+    time.sleep(10)
     print('Loop camera started!')
     total_count = 0
     frame_id = 0
