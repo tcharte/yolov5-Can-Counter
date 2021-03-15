@@ -8,6 +8,9 @@ def detect_cans(frame_processor, frame_queue, detections_queue, params):
                 frame, frame_id = frame_queue.get(block=False)
                 detections = frame_processor.detect_cans(frame)
                 detections_queue.put((detections, frame_id))
+                del frame
+                del frame_id
+                del detections
             except Empty:
                 continue
 
@@ -20,6 +23,9 @@ def detect_cans(frame_processor, frame_queue, detections_queue, params):
                 frame, frame_id = frame_queue.get(block=False)
                 detections = frame_processor.detect_cans(frame)
                 detections_queue.put((detections, frame_id))
+                del frame
+                del frame_id
+                del detections
             except Empty:
                 continue
 

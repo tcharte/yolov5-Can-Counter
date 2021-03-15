@@ -15,7 +15,7 @@ def count_cans(splits, detections_queue, count_queue):
             detections = torch.Tensor(detections)  # Converting to tensor for ease of calculation
 
             detections_list.append(detections)
-
+            del detections
             if len(detections_list) == n_frame_avg:
                 # Only starts counting when the queue is full
                 n_detections = []
@@ -36,6 +36,7 @@ def count_cans(splits, detections_queue, count_queue):
                 total_cans += num_cans
                 try:
                     count_queue.put((total_cans, frame_id))
+                    del frame_id
                 except Full:
                     continue
 

@@ -56,10 +56,21 @@ def main():
     if len(splits) < min_splits:
         return
 
-    frame_queue = multiprocessing.Queue(maxsize=100000)  # Queue for the instances to get frames from the class. Max ~800MB
-    raw_detections_queue = multiprocessing.Queue(maxsize=100000)
-    sorted_detections_queue = multiprocessing.Queue(maxsize=100000)
-    count_queue = multiprocessing.Queue(maxsize=1)
+    frame_queue = None
+    raw_detections_queue = None
+    sorted_detections_queue = None
+    count_queue = None
+
+    if platform.system() == 'Linux':
+        frame_queue = mp.Queue(maxsize=100000)  # Queue for the instances to get frames from the class. Max ~800MB
+        raw_detections_queue = mp.Queue(maxsize=100000)
+        sorted_detections_queue = mp.Queue(maxsize=100000)
+        count_queue = mp.Queue(maxsize=1)
+    elif platform.system() == 'Windows':
+        frame_queue = multiprocessing.Queue(maxsize=100000)  # Queue for the instances to get frames from the class. Max ~800MB
+        raw_detections_queue = multiprocessing.Queue(maxsize=100000)
+        sorted_detections_queue = multiprocessing.Queue(maxsize=100000)
+        count_queue = multiprocessing.Queue(maxsize=1)
 
     print('Initializing counting process...')
     count_process = multiprocessing.Process(target=count_cans, args=(splits, sorted_detections_queue, count_queue))

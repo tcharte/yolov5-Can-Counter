@@ -18,6 +18,7 @@ def sort_detections(detections_in, detections_out, splits, model_count):
                     if i >= sort_size // 2:
                         del buffer[0:i+1]
                         break
+            del detections
         except Empty:
             continue
 
