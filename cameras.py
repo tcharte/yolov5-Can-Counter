@@ -37,11 +37,14 @@ class LoopCamera:
 
     def __init__(self, video, frame_queue, fps, process_trigger=False):
         if process_trigger:  # Introduced a flag that only the main process can trigger so infinite process do not spawn
-            if LoopCamera.generator is None:
+            if self.generator is None:
                 import multiprocessing
-                LoopCamera.generator = multiprocessing.Process(target=frame_generator, args=(video, frame_queue, LoopCamera.real_count_queue, fps))
-                LoopCamera.generator.start()
+                self.generator = multiprocessing.Process(target=frame_generator, args=(video, frame_queue, LoopCamera.real_count_queue, fps))
+                self.generator.start()
 
-    @staticmethod
-    def get_count():
-        return LoopCamera.real_count_queue.get()
+    def get_count(self):
+        return self.real_count_queue.get()
+
+    def terminate(self):
+        self.generator.terminate()
+        return
