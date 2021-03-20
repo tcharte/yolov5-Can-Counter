@@ -1,0 +1,109 @@
+[{
+    "Model": "yolov3-tiny",
+    "Image Size": 320,
+    "Video FPS": 15,
+    "Calculated FPS": 14.711020252807781,
+    "Error": -21.25984251968504
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 480,
+    "Video FPS": 15,
+    "Calculated FPS": 14.710981039081164,
+    "Error": -49.60629921259843
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 640,
+    "Video FPS": 15,
+    "Calculated FPS": 14.607936292002696,
+    "Error": -47.24409448818898
+}, {
+    "Model": "yolov5s",
+    "Image Size": 320,
+    "Video FPS": 15,
+    "Calculated FPS": 14.701274337056159,
+    "Error": -22.83464566929134
+}, {
+    "Model": "yolov5s",
+    "Image Size": 480,
+    "Video FPS": 15,
+    "Calculated FPS": 14.703016216980599,
+    "Error": -25.196850393700785
+}, {
+    "Model": "yolov5s",
+    "Image Size": 640,
+    "Video FPS": 15,
+    "Calculated FPS": 11.403975925270817,
+    "Error": -24.409448818897637
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 320,
+    "Video FPS": 30,
+    "Calculated FPS": 21.489751811868757,
+    "Error": 6.25
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 480,
+    "Video FPS": 30,
+    "Calculated FPS": 18.647894450074816,
+    "Error": 7.8125
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 640,
+    "Video FPS": 30,
+    "Calculated FPS": 14.810950367879249,
+    "Error": 4.6875
+}, {
+    "Model": "yolov5s",
+    "Image Size": 320,
+    "Video FPS": 30,
+    "Calculated FPS": 17.443538228066256,
+    "Error": 6.25
+}, {
+    "Model": "yolov5s",
+    "Image Size": 480,
+    "Video FPS": 30,
+    "Calculated FPS": 14.560714699448049,
+    "Error": 6.25
+}, {
+    "Model": "yolov5s",
+    "Image Size": 640,
+    "Video FPS": 30,
+    "Calculated FPS": 11.549743126335668,
+    "Error": 0.0
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 320,
+    "Video FPS": 60,
+    "Calculated FPS": 20.991406208671787,
+    "Error": -3.125
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 480,
+    "Video FPS": 60,
+    "Calculated FPS": 20.155495537688164,
+    "Error": -6.25
+}, {
+    "Model": "yolov3-tiny",
+    "Image Size": 640,
+    "Video FPS": 60,
+    "Calculated FPS": 15.069910297417293,
+    "Error": 0.0
+}, {
+    "Model": "yolov5s",
+    "Image Size": 320,
+    "Video FPS": 60,
+    "Calculated FPS": 18.883328800432313,
+    "Error": -6.25
+}, {
+    "Model": "yolov5s",
+    "Image Size": 480,
+    "Video FPS": 60,
+    "Calculated FPS": 15.104485465759364,
+    "Error": -3.125
+}, {
+    "Model": "yolov5s",
+    "Image Size": 640,
+    "Video FPS": 60,
+    "Calculated FPS": 11.581354387891365,
+    "Error": 3.125
+}]
