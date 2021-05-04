@@ -14,13 +14,13 @@ def video_preloader(source, fps):
         if not success:
             break
         else:
-            if fps == 60:
-                frames.append(img)
             if fps == 30:
                 if (count % 2) == 0:
                     frames.append(img)
-            if fps == 15:
+            elif fps == 15:
                 if (count % 4) == 0:
                     frames.append(img)
+            else:
+                frames.append(img)
         count += 1
     return frames

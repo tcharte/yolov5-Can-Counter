@@ -1,4 +1,4 @@
-def frame_generator(video, frame_queue, count_queue, fps):
+def frame_generator(video, frame_queue, count_queue, fps, loop=True):
     import time
     """
     Target function for running the camera acquisition as a process. This makes more sense as the dedicated process for
@@ -22,6 +22,8 @@ def frame_generator(video, frame_queue, count_queue, fps):
             print('Count queue is full! Consumers are too slow. The actual can count is no longer accurate...')
         else:
             count_queue.put(total_count)
+        if not loop:
+            break
 
 
 class LoopCamera:
@@ -33,11 +35,11 @@ class LoopCamera:
     real_count_queue = multiprocessing.Queue(maxsize=100000)  # Max will be quite small since this holds integers
     generator = None
 
-    def __init__(self, video, frame_queue, fps, process_trigger=False):
+    def __init__(self, video, frame_queue, fps, process_trigger=False, loop=True):
         if process_trigger:  # Introduced a flag that only the main process can trigger so infinite process do not spawn
             if LoopCamera.generator is None:
                 import multiprocessing
-                LoopCamera.generator = multiprocessing.Process(target=frame_generator, args=(video, frame_queue, LoopCamera.real_count_queue, fps))
+                LoopCamera.generator = multiprocessing.Process(target=frame_generator, args=(video, frame_queue, LoopCamera.real_count_queue, fps, loop))
                 LoopCamera.generator.start()
 
     @staticmethod

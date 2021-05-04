@@ -174,4 +174,5 @@ if __name__ == '__main__':
         else:
             detect()
 
-# detect.py --weights weights/best_600_epoch_new_dataset.pt --source data/mp4s/roughly_880_cans.mp4
+# detect.py --weights weights/best_600_epoch_new_dataset.pt --source data/mp4s/229.mp4 --view-img --save-txt --conf-thres 0.6
+# detect.py --weights weights/best_yolov3_tiny_600ep.pt --source data/mp4s/1078.mp4 --view-img --save-txt --conf-thres 0.5
